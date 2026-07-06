@@ -5,6 +5,7 @@ const playerRoutes = require("./src/routes/playerRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const analyticsRoutes = require("./src/routes/analyticsRoutes");
 const statsRoutes = require("./src/routes/statsRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
 const playerController = require("./src/controllers/playerController");
 const requestTimer = require("./src/middlewares/requestTimer");
 const loggerMiddleware = require("./src/middlewares/loggerMiddleware");
@@ -46,6 +47,9 @@ app.get("/", (req, res) => {
 
 // Authentication routes
 app.use("/auth", authRoutes);
+
+// Admin dashboard routes
+app.use("/admin", adminRoutes);
 
 // Analytics and stats routes
 app.use("/analytics", analyticsRoutes);

@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const playerController = require("../controllers/playerController");
-const { protect, restrictTo } = require("../middlewares/authMiddleware");
+const { protect } = require("../middlewares/authMiddleware");
+const { authorize } = require("../middlewares/roleMiddleware");
+const { PERMISSIONS } = require("../utils/permissions");
 const validate = require("../middlewares/validationMiddleware");
 const {
   playerBodySchema,
@@ -14,7 +16,7 @@ router
   .get(validate(playerQuerySchema, "query"), playerController.getAllPlayers)
   .post(
     protect,
-    restrictTo("admin"),
+    authorize(PERMISSIONS.WRITE_PLAYERS),
     validate(playerBodySchema, "body"),
     playerController.createPlayer
   );
@@ -27,10 +29,10 @@ router
   .get(playerController.getPlayerById)
   .patch(
     protect,
-    restrictTo("admin"),
+    authorize(PERMISSIONS.WRITE_PLAYERS),
     validate(playerUpdateSchema, "body"),
     playerController.updatePlayer
   )
-  .delete(protect, restrictTo("admin"), playerController.deletePlayer);
+  .delete(protect, authorize(PERMISSIONS.WRITE_PLAYERS), playerController.deletePlayer);
 
 module.exports = router;

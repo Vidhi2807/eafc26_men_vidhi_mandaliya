@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const analyticsController = require("../controllers/analyticsController");
+const { protect } = require("../middlewares/authMiddleware");
+const { authorize } = require("../middlewares/roleMiddleware");
+const { PERMISSIONS } = require("../utils/permissions");
+
+router.use(protect);
+router.use(authorize(PERMISSIONS.READ_ANALYTICS));
 
 router.get("/players/top-rated", analyticsController.getTopRated);
 router.get("/players/top-scorers", analyticsController.getTopScorers);

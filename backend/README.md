@@ -17,6 +17,7 @@ This is the backend API documentation for the **EAFC 26 Player Analytics API**. 
 * **Implemented:** **MongoDB Aggregation Analytics and Statistics APIs** (Multi-stage pipelines grouping teams, leagues, nations, counting databases, averaging metrics, and rendering custom position splits).
 * **Implemented:** **Joi Validation Layer for Player and Auth APIs** (Declarative validation schemas verifying parameter bounds, email formats, and body data shapes before execution).
 * **Implemented:** **Backend Security Middleware and API Rate Limiting** (Helmet headers, CORS restrictions, NoSQL query sanitization, recursive HTML script escaping, and client rate limiting).
+* **Implemented:** **Role Based Access Control and Admin Routes** (Granular permissions authorization middleware, protected analytics/dashboard endpoints, and user/admin role validations).
 
 ---
 
