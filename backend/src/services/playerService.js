@@ -1,96 +1,48 @@
 const Player = require("../models/Player");
+const { SORT } = require("../config/constants");
+const { getPaginationMetadata } = require("../utils/pagination");
+const { buildPlayerQuery } = require("../utils/queryBuilder");
 
 class PlayerService {
   /**
    * Get all players with filtering, sorting, and pagination
    */
   async getAllPlayers(queryParams) {
-    const {
-      page = 1,
-      limit = 10,
-      sort,
-      search,
-      ovr,
-      minPace,
-      minShooting,
-      minPassing,
-      minDribbling,
-      minDefending,
-      minPhysical,
-      team,
-      league,
-      nation,
-      position,
-      preferredFoot,
-      age,
-      skillMoves,
-      weakFoot,
-    } = queryParams;
+    const { page, limit, sort } = queryParams;
 
-    const filter = {};
+    // 1. Build DB Query Object
+    const filter = buildPlayerQuery(queryParams);
 
-    // Basic Filters
-    if (ovr) filter.ovr = Number(ovr);
-    if (age) filter.age = Number(age);
-    if (skillMoves) filter.skillMoves = Number(skillMoves);
-    if (weakFoot) filter.weakFoot = Number(weakFoot);
-    if (preferredFoot) filter.preferredFoot = preferredFoot;
+    // 2. Build Pagination skip & limits
+    const totalItems = await Player.countDocuments(filter);
+    const { skip, limit: parsedLimit, metadata } = getPaginationMetadata(page, limit, totalItems);
 
-    // String matching (case-insensitive partial match)
-    if (team) filter.team = { $regex: team, $options: "i" };
-    if (league) filter.league = { $regex: league, $options: "i" };
-    if (nation) filter.nation = { $regex: nation, $options: "i" };
-    if (position) filter.position = { $regex: `^${position}$`, $options: "i" };
-
-    // Min Range filters
-    if (minPace) filter.pace = { $gte: Number(minPace) };
-    if (minShooting) filter.shooting = { $gte: Number(minShooting) };
-    if (minPassing) filter.passing = { $gte: Number(minPassing) };
-    if (minDribbling) filter.dribbling = { $gte: Number(minDribbling) };
-    if (minDefending) filter.defending = { $gte: Number(minDefending) };
-    if (minPhysical) filter.physical = { $gte: Number(minPhysical) };
-
-    // Search query (across name, team, league, nation)
-    if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { team: { $regex: search, $options: "i" } },
-        { league: { $regex: search, $options: "i" } },
-        { nation: { $regex: search, $options: "i" } },
-      ];
-    }
-
-    // Pagination
-    const pageNum = Math.max(1, parseInt(page, 10));
-    const limitNum = Math.max(1, parseInt(limit, 10));
-    const skip = (pageNum - 1) * limitNum;
-
-    // Sorting
+    // 3. Build Sort Object
     let sortOption = {};
     if (sort) {
-      // Support reverse order sorting if field prefixed with '-'
-      const sortField = sort.startsWith("-") ? sort.substring(1) : sort;
-      const sortOrder = sort.startsWith("-") ? -1 : 1;
-      sortOption[sortField] = sortOrder;
+      const isDesc = sort.startsWith("-");
+      const field = isDesc ? sort.substring(1) : sort;
+
+      if (SORT.ALLOWED_FIELDS.includes(field)) {
+        sortOption[field] = isDesc ? -1 : 1;
+      } else {
+        // Fallback to default sorting if field is not allowed
+        sortOption[SORT.DEFAULT_FIELD] = SORT.DEFAULT_ORDER;
+      }
     } else {
-      // Default sort by rank ascending
-      sortOption.rank = 1;
+      // Default sort
+      sortOption[SORT.DEFAULT_FIELD] = SORT.DEFAULT_ORDER;
     }
 
-    const total = await Player.countDocuments(filter);
+    // 4. Query Database
     const players = await Player.find(filter)
       .sort(sortOption)
       .skip(skip)
-      .limit(limitNum);
+      .limit(parsedLimit);
 
     return {
       players,
-      pagination: {
-        total,
-        page: pageNum,
-        limit: limitNum,
-        pages: Math.ceil(total / limitNum) || 1,
-      },
+      pagination: metadata,
     };
   }
 
