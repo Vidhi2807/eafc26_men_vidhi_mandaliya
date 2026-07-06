@@ -1,0 +1,24 @@
+{
+  "id": "eafc26-env-id",
+  "name": "EAFC26 Local Environment",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "key": "userToken",
+      "value": "your-user-jwt-here",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "key": "adminToken",
+      "value": "your-admin-jwt-here",
+      "type": "text",
+      "enabled": true
+    }
+  ]
+}
