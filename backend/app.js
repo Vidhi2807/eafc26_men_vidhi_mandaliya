@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 const playerRoutes = require("./src/routes/playerRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const analyticsRoutes = require("./src/routes/analyticsRoutes");
@@ -9,14 +10,32 @@ const requestTimer = require("./src/middlewares/requestTimer");
 const loggerMiddleware = require("./src/middlewares/loggerMiddleware");
 const errorMiddleware = require("./src/middlewares/errorMiddleware");
 
+const corsConfig = require("./src/config/cors");
+const { apiLimiter } = require("./src/middlewares/rateLimiter");
+const { mongoSanitizer, xssSanitizer } = require("./src/middlewares/sanitizeMiddleware");
+
 const app = express();
 
-app.use(cors());
+// Secure Headers
+app.use(helmet());
+
+// Enable CORS with custom configuration
+app.use(cors(corsConfig));
+
 app.use(express.json());
 
 // Performance monitoring & logging middlewares
 app.use(requestTimer);
 app.use(loggerMiddleware);
+
+// Data Sanitization against NoSQL Query Injection
+app.use(mongoSanitizer);
+
+// Data Sanitization against XSS
+app.use(xssSanitizer);
+
+// API Rate Limiting
+app.use(apiLimiter);
 
 app.get("/", (req, res) => {
   res.json({
