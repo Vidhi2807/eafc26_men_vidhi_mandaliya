@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const playerRoutes = require("./src/routes/playerRoutes");
 const authRoutes = require("./src/routes/authRoutes");
+const analyticsRoutes = require("./src/routes/analyticsRoutes");
+const statsRoutes = require("./src/routes/statsRoutes");
 const playerController = require("./src/controllers/playerController");
 const requestTimer = require("./src/middlewares/requestTimer");
 const loggerMiddleware = require("./src/middlewares/loggerMiddleware");
@@ -25,6 +27,10 @@ app.get("/", (req, res) => {
 
 // Authentication routes
 app.use("/auth", authRoutes);
+
+// Analytics and stats routes
+app.use("/analytics", analyticsRoutes);
+app.use("/stats", statsRoutes);
 
 // Explicit search route
 app.get("/search/players", playerController.getAllPlayers);

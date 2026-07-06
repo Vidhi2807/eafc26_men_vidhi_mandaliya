@@ -14,6 +14,7 @@ This is the backend API documentation for the **EAFC 26 Player Analytics API**. 
 * **Implemented:** **Advanced MongoDB Filtering and Search Queries** (Attribute boundary ranges, array containment queries, and pre-defined performance/attribute filter presets).
 * **Implemented:** **Global Middleware and Error Handling System** (Centralized logging, request timing header `X-Response-Time`, CustomError helper, and global exception formatter).
 * **Implemented:** **JWT Authentication and Protected Routes** (Bcrypt-based password hashing, registration, login endpoints, and secure authorization guards for mutating actions).
+* **Implemented:** **MongoDB Aggregation Analytics and Statistics APIs** (Multi-stage pipelines grouping teams, leagues, nations, counting databases, averaging metrics, and rendering custom position splits).
 
 ---
 
