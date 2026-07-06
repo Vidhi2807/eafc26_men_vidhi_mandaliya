@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const playerRoutes = require("./src/routes/playerRoutes");
+const authRoutes = require("./src/routes/authRoutes");
 const playerController = require("./src/controllers/playerController");
 const requestTimer = require("./src/middlewares/requestTimer");
 const loggerMiddleware = require("./src/middlewares/loggerMiddleware");
@@ -21,6 +22,9 @@ app.get("/", (req, res) => {
     message: "EAFC 26 Player Analytics API is running",
   });
 });
+
+// Authentication routes
+app.use("/auth", authRoutes);
 
 // Explicit search route
 app.get("/search/players", playerController.getAllPlayers);
