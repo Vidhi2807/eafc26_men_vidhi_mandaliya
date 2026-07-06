@@ -12,6 +12,16 @@ const getPlayerById = asyncHandler(async (req, res) => {
   return ApiResponse.success(res, "Player retrieved successfully", player);
 });
 
+const getPredefinedFilteredPlayers = asyncHandler(async (req, res) => {
+  const { filterType } = req.params;
+  const result = await playerService.getPredefinedFilteredPlayers(filterType, req.query);
+  return ApiResponse.success(
+    res,
+    `Players with filter '${filterType}' retrieved successfully`,
+    result
+  );
+});
+
 const createPlayer = asyncHandler(async (req, res) => {
   const newPlayer = await playerService.createPlayer(req.body);
   return ApiResponse.success(res, "Player created successfully", newPlayer, 201);
@@ -30,6 +40,7 @@ const deletePlayer = asyncHandler(async (req, res) => {
 module.exports = {
   getAllPlayers,
   getPlayerById,
+  getPredefinedFilteredPlayers,
   createPlayer,
   updatePlayer,
   deletePlayer,

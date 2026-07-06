@@ -7,6 +7,9 @@ router
   .get(playerController.getAllPlayers)
   .post(playerController.createPlayer);
 
+// Preset analytics filters (e.g. /players/filter/high-rated)
+router.get("/filter/:filterType", playerController.getPredefinedFilteredPlayers);
+
 router
   .route("/:id")
   .get(playerController.getPlayerById)
