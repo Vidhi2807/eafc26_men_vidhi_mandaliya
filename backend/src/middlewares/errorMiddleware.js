@@ -5,6 +5,11 @@ const errorMiddleware = (err, req, res, next) => {
   let message = err.message || "Internal Server Error";
   let errors = null;
 
+  // Log error status, timestamp, and message
+  console.error(
+    `[Error Handler] [${new Date().toISOString()}] ${err.name || "Error"} (${statusCode}): ${message}`
+  );
+
   // Handle Mongoose Validation Error
   if (err.name === "ValidationError") {
     statusCode = 400;
@@ -25,11 +30,12 @@ const errorMiddleware = (err, req, res, next) => {
     message = `Invalid value for ${err.path}: ${err.value}`;
   }
 
-  // Under development, show stack trace and details
+  // Construct standard error payload
   const errorPayload = {};
   if (errors) {
     errorPayload.details = errors;
   }
+
   if (process.env.NODE_ENV !== "production") {
     errorPayload.stack = err.stack;
   }

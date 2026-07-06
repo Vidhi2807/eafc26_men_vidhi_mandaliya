@@ -11,6 +11,7 @@ This is the backend API documentation for the **EAFC 26 Player Analytics API**. 
 ### **📢 Status Update (July 2026)**
 * **Implemented:** **Player CRUD APIs using MVC Architecture**
 * **Implemented:** **Pagination, Sorting, and Filtering Features** (Full support for `?page=`, `?limit=`, `?sort=`, `?team=`, `?league=`, `?nation=`, `?position=`, and keyword `?search=`/`?q=` query parameters).
+* **Implemented:** **Global Middleware and Error Handling System** (Centralized logging, request timing header `X-Response-Time`, CustomError helper, and global exception formatter).
 
 ---
 
