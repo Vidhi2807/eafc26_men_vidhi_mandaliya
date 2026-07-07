@@ -61,7 +61,7 @@ const Login = () => {
 
         {/* Form */}
         <Formik
-          initialValues={{ email: '', password: '' }}
+          initialValues={{ email: 'vidhimandaliya81@gmail.com', password: '123456789' }}
           validationSchema={LoginSchema}
           onSubmit={handleSubmit}
         >
