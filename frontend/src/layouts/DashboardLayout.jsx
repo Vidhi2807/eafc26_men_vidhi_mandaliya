@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../features/auth/authSlice';
+import { toggleSidebar } from '../features/ui/uiSlice';
 import { 
   FaChartBar, 
   FaUsers, 
@@ -17,13 +18,13 @@ import {
 } from 'react-icons/fa';
 
 const DashboardLayout = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const location = useLocation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { sidebarCollapsed } = useSelector((state) => state.ui);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -53,7 +54,7 @@ const DashboardLayout = () => {
       {/* Sidebar - Desktop */}
       <aside 
         className={`hidden md:flex flex-col bg-slate-900 border-r border-slate-800 transition-all duration-300 ${
-          isCollapsed ? 'w-20' : 'w-64'
+          sidebarCollapsed ? 'w-20' : 'w-64'
         }`}
       >
         {/* Brand header */}
@@ -62,17 +63,17 @@ const DashboardLayout = () => {
             <span className="p-2 bg-indigo-500 rounded-xl text-white flex-shrink-0">
               <FaChartBar size={18} />
             </span>
-            {!isCollapsed && (
+            {!sidebarCollapsed && (
               <span className="font-bold text-lg tracking-tight text-white whitespace-nowrap animate-fade-in">
                 EAFC 26
               </span>
             )}
           </div>
           <button 
-            onClick={() => setIsCollapsed(!isCollapsed)} 
+            onClick={() => dispatch(toggleSidebar())} 
             className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
           >
-            {isCollapsed ? <FaChevronRight size={14} /> : <FaChevronLeft size={14} />}
+            {sidebarCollapsed ? <FaChevronRight size={14} /> : <FaChevronLeft size={14} />}
           </button>
         </div>
 
@@ -89,7 +90,7 @@ const DashboardLayout = () => {
               }`}
             >
               <span className="text-lg flex-shrink-0">{item.icon}</span>
-              {!isCollapsed && (
+              {!sidebarCollapsed && (
                 <span className="font-medium text-sm whitespace-nowrap">{item.name}</span>
               )}
             </Link>
@@ -97,7 +98,7 @@ const DashboardLayout = () => {
         </nav>
 
         {/* User profile summary in sidebar footer */}
-        {!isCollapsed && user && (
+        {!sidebarCollapsed && user && (
           <div className="p-4 border-t border-slate-800 bg-slate-900/40 m-4 rounded-xl flex items-center gap-3">
             <FaUserCircle size={32} className="text-indigo-400" />
             <div className="overflow-hidden">
