@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { store } from './store';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,6 +14,8 @@ import Compare from './pages/Compare';
 import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoute';
+import PlayerDetailsModal from './components/PlayerDetailsModal';
+import { clearSelectedPlayer } from './features/player/playerSlice';
 
 // Create dark MUI theme
 const darkTheme = createTheme({
@@ -32,43 +34,57 @@ const darkTheme = createTheme({
   },
 });
 
+const PlayerDetailsModalWrapper = () => {
+  const dispatch = useDispatch();
+  return <PlayerDetailsModal onClose={() => dispatch(clearSelectedPlayer())} />;
+};
+
+const AppContent = () => {
+  return (
+    <>
+      <Router>
+        <Routes>
+          {/* Public Routes (only accessible if logged out) */}
+          <Route path="/login" element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } />
+          <Route path="/register" element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          } />
+
+          {/* Protected Routes (only accessible if logged in) */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Dashboard />} />
+            <Route path="players" element={<Players />} />
+            <Route path="compare" element={<Compare />} />
+            <Route path="admin" element={<AdminPanel />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+
+          {/* Catch-all fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+      <Toaster position="bottom-right" />
+      <PlayerDetailsModalWrapper />
+    </>
+  );
+};
+
 const App = () => {
   return (
     <Provider store={store}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Router>
-          <Routes>
-            {/* Public Routes (only accessible if logged out) */}
-            <Route path="/login" element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            } />
-            <Route path="/register" element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            } />
-
-            {/* Protected Routes (only accessible if logged in) */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Dashboard />} />
-              <Route path="players" element={<Players />} />
-              <Route path="compare" element={<Compare />} />
-              <Route path="admin" element={<AdminPanel />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-
-            {/* Catch-all fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Router>
-        <Toaster position="bottom-right" />
+        <AppContent />
       </ThemeProvider>
     </Provider>
   );

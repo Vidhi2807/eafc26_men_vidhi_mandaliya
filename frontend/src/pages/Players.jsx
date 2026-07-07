@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPlayers, setFilters, setPage } from '../features/player/playerSlice';
+import { fetchPlayers, setFilters, setPage, fetchPlayerDetails } from '../features/player/playerSlice';
 import { FaSearch, FaChevronLeft, FaChevronRight, FaFilter, FaRedo } from 'react-icons/fa';
 
 const POSITIONS = ['ST', 'CF', 'LW', 'RW', 'LM', 'RM', 'CM', 'CAM', 'CDM', 'CB', 'LB', 'RB', 'LWB', 'RWB', 'GK'];
@@ -93,7 +93,11 @@ const Players = () => {
             type="text"
             placeholder="Search players by name, team, league..."
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSearchInput(val);
+              dispatch(setFilters({ q: val }));
+            }}
             className="w-full pl-11 pr-24 py-3 bg-slate-850 border border-slate-800 hover:border-slate-700 focus:border-indigo-500 rounded-xl placeholder-slate-500 text-sm focus:outline-none text-slate-200 transition-all"
           />
           <button 
@@ -190,7 +194,8 @@ const Players = () => {
             {players.map((player) => (
               <div 
                 key={player._id} 
-                className="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 hover:border-indigo-500/25 transition-all duration-300 flex gap-5 shadow-lg relative group"
+                onClick={() => dispatch(fetchPlayerDetails(player.playerId))}
+                className="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 hover:border-indigo-500/25 transition-all duration-300 flex gap-5 shadow-lg relative group cursor-pointer"
               >
                 {/* OVR Rating Badge on Card */}
                 <div className="flex flex-col items-center justify-center bg-slate-800/80 border border-slate-750 p-4 rounded-xl min-w-[70px] h-[90px]">

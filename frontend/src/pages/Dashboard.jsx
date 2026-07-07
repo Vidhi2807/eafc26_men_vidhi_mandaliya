@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPlayerStats } from '../features/player/playerSlice';
+import { fetchPlayerStats, fetchPlayerDetails } from '../features/player/playerSlice';
 import { 
   FaUsers, 
   FaStar, 
@@ -94,7 +94,12 @@ const Dashboard = () => {
           {leaders.map((leader) => (
             <div 
               key={leader.category}
-              className="bg-slate-900 border border-slate-800/80 rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col group"
+              onClick={() => {
+                if (leader.player?.playerId) {
+                  dispatch(fetchPlayerDetails(leader.player.playerId));
+                }
+              }}
+              className="bg-slate-900 border border-slate-800/80 rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-indigo-500/5 hover:-translate-y-1 cursor-pointer transition-all duration-300 flex flex-col group"
             >
               {/* Leader header */}
               <div className="p-4 bg-slate-900/50 border-b border-slate-800 flex items-center justify-between">
